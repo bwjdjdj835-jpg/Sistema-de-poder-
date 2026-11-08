@@ -262,6 +262,52 @@ $("#importar").onchange = async e => {
   } catch { alert("Arquivo inválido."); }
 };
 
+// ---------- Baixar PDF / TXT ----------
+function textoCompleto() {
+  const L = [];
+  L.push("FORJA DE PODER", "Sistemas de poder de animes (2023–2025) e o seu sistema", "");
+  L.push("=== PARTE 1: ANIMES ===", "");
+  ANIMES.forEach(a => {
+    L.push(`${a.titulo} (${a.ano})`, `Sistema de poder: ${a.sistema}`, a.resumo, "Personagens:");
+    a.personagens.forEach(p => L.push(`  - ${p.nome}: ${p.poder} (ligação: ${p.ligacao})`));
+    L.push("");
+  });
+  L.push("=== PARTE 2: MEU SISTEMA ===", "", `${S.nome} — energia: ${S.energia}`, `${S.linhagens.length} linhagens · ${S.personagens.length} personagens`, "");
+  S.linhagens.forEach(l => {
+    const m = S.personagens.filter(p => p.lin === l.id);
+    L.push(`${l.nome} — poder: ${l.poder}`, `  Efeito: ${l.efeito}`, `  Fraqueza: ${l.fraqueza}`, `  Membros (${m.length}):`);
+    m.forEach(p => {
+      const cx = conexoesDe(p).map(c => `${c.tipo} de ${c.outro.nome}`).join("; ");
+      L.push(`    - ${p.nome} [Rank ${p.rank}] — técnica: ${p.tecnica}${cx ? " — conexões: " + cx : ""}`);
+    });
+    L.push("");
+  });
+  return L.join("\n");
+}
+function htmlRelatorio() {
+  let h = `<h1>Forja de Poder</h1><p>Sistemas de poder de animes (2023–2025) e o seu sistema</p><h2>Parte 1: Animes</h2>`;
+  ANIMES.forEach(a => {
+    h += `<div class="bloco"><h3>${esc(a.titulo)} (${a.ano})</h3><p><b>Sistema de poder:</b> ${esc(a.sistema)}</p><p>${esc(a.resumo)}</p><ul>${a.personagens.map(p => `<li><b>${esc(p.nome)}</b>: ${esc(p.poder)} <i>(ligação: ${esc(p.ligacao)})</i></li>`).join("")}</ul></div>`;
+  });
+  h += `<h2 class="quebra">Parte 2: ${esc(S.nome)}</h2><p><b>Energia:</b> ${esc(S.energia)} · ${S.linhagens.length} linhagens · ${S.personagens.length} personagens</p>`;
+  S.linhagens.forEach(l => {
+    const m = S.personagens.filter(p => p.lin === l.id);
+    h += `<div class="bloco"><h3>${esc(l.nome)}: ${esc(l.poder)}</h3><p><b>Efeito:</b> ${esc(l.efeito)} · <b>Fraqueza:</b> ${esc(l.fraqueza)}</p><ul>${m.map(p => {
+      const cx = conexoesDe(p).map(c => `${c.tipo} de ${c.outro.nome}`).join("; ");
+      return `<li><b>${esc(p.nome)}</b> [Rank ${p.rank}]: ${esc(p.tecnica)}${cx ? ` <i>(${esc(cx)})</i>` : ""}</li>`;
+    }).join("")}</ul></div>`;
+  });
+  return h;
+}
+window.prepararRelatorio = () => { $("#relatorio").innerHTML = htmlRelatorio(); };
+window.addEventListener("beforeprint", window.prepararRelatorio);
+$("#baixarPdf").onclick = () => { window.prepararRelatorio(); window.print(); };
+$("#baixarTxt").onclick = () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([textoCompleto()], { type: "text/plain;charset=utf-8" }));
+  a.download = "forja-de-poder.txt"; a.click();
+};
+
 $("#sNome").value = S.nome; $("#sEnergia").value = S.energia;
 tudo();
 })();
