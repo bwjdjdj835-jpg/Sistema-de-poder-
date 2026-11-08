@@ -263,52 +263,59 @@ $("#importar").onchange = async e => {
 };
 
 // ---------- Baixar PDF / TXT ----------
-function textoCompleto() {
-  const L = [];
-  L.push("FORJA DE PODER", "Sistemas de poder de animes (2023–2025) e o seu sistema", "");
-  L.push("=== PARTE 1: ANIMES ===", "");
+const nomeArq = t => (t || "arquivo").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^\w]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+function catalogo() {
+  const L = ["ANIMES 2023–2025: SISTEMAS DE PODER", ""];
+  let h = `<h1>Animes 2023–2025: sistemas de poder</h1>`;
   ANIMES.forEach(a => {
-    L.push(`${a.titulo} (${a.ano})`, `Sistema de poder: ${a.sistema}`, a.resumo, "Personagens:");
-    a.personagens.forEach(p => L.push(`  - ${p.nome}: ${p.poder} (ligação: ${p.ligacao})`));
-    L.push("");
+    L.push(`${a.titulo} (${a.ano})`, `Sistema de poder: ${a.sistema}`, a.resumo, "Personagens:", ...a.personagens.map(p => `  - ${p.nome}: ${p.poder} (ligação: ${p.ligacao})`), "");
+    h += `<div class="bloco"><h3>${esc(a.titulo)} (${a.ano})</h3><p><b>Sistema de poder:</b> ${esc(a.sistema)}</p><p>${esc(a.resumo)}</p><ul>${a.personagens.map(p => `<li><b>${esc(p.nome)}</b>: ${esc(p.poder)} <i>(ligação: ${esc(p.ligacao)})</i></li>`).join("")}</ul></div>`;
   });
-  if (window.meusTexto) L.push("=== MEUS ANIMES ===", "", window.meusTexto());
-  L.push("=== PARTE 2: MEU SISTEMA ===", "", `${S.nome} — energia: ${S.energia}`, `${S.linhagens.length} linhagens · ${S.personagens.length} personagens`, "");
+  return { nome: "animes-2023-2025", titulo: "Animes 2023–2025", texto: L.join("\n"), html: h };
+}
+function sistemaAtual() {
+  const L = [S.nome.toUpperCase(), `Energia: ${S.energia}`, `${S.linhagens.length} linhagens · ${S.personagens.length} personagens`, ""];
+  let h = `<h1>${esc(S.nome)}</h1><p><b>Energia:</b> ${esc(S.energia)} · ${S.linhagens.length} linhagens · ${S.personagens.length} personagens</p>`;
   S.linhagens.forEach(l => {
     const m = S.personagens.filter(p => p.lin === l.id);
     L.push(`${l.nome} — poder: ${l.poder}`, `  Efeito: ${l.efeito}`, `  Fraqueza: ${l.fraqueza}`, `  Membros (${m.length}):`);
+    h += `<div class="bloco"><h3><span class="corFam" style="background:${l.cor}"></span>${esc(l.nome)}: ${esc(l.poder)}</h3><p><b>Efeito:</b> ${esc(l.efeito)} · <b>Fraqueza:</b> ${esc(l.fraqueza)}</p><ul>`;
     m.forEach(p => {
       const cx = conexoesDe(p).map(c => `${c.tipo} de ${c.outro.nome}`).join("; ");
       L.push(`    - ${p.nome} [Rank ${p.rank}] — técnica: ${p.tecnica}${cx ? " — conexões: " + cx : ""}`);
+      h += `<li><b>${esc(p.nome)}</b> [Rank ${p.rank}]: ${esc(p.tecnica)}${cx ? ` <i>(${esc(cx)})</i>` : ""}</li>`;
     });
-    L.push("");
+    L.push(""); h += `</ul></div>`;
   });
-  return L.join("\n");
+  return { nome: nomeArq(S.nome), titulo: S.nome, texto: L.join("\n"), html: h };
 }
-function htmlRelatorio() {
-  let h = `<h1>Forja de Poder</h1><p>Sistemas de poder de animes (2023–2025) e o seu sistema</p><h2>Parte 1: Animes</h2>`;
-  ANIMES.forEach(a => {
-    h += `<div class="bloco"><h3>${esc(a.titulo)} (${a.ano})</h3><p><b>Sistema de poder:</b> ${esc(a.sistema)}</p><p>${esc(a.resumo)}</p><ul>${a.personagens.map(p => `<li><b>${esc(p.nome)}</b>: ${esc(p.poder)} <i>(ligação: ${esc(p.ligacao)})</i></li>`).join("")}</ul></div>`;
-  });
-  if (window.meusHtml) h += `<h2 class="quebra">Meus animes</h2>` + window.meusHtml();
-  h += `<h2 class="quebra">Parte 2: ${esc(S.nome)}</h2><p><b>Energia:</b> ${esc(S.energia)} · ${S.linhagens.length} linhagens · ${S.personagens.length} personagens</p>`;
-  S.linhagens.forEach(l => {
-    const m = S.personagens.filter(p => p.lin === l.id);
-    h += `<div class="bloco"><h3>${esc(l.nome)}: ${esc(l.poder)}</h3><p><b>Efeito:</b> ${esc(l.efeito)} · <b>Fraqueza:</b> ${esc(l.fraqueza)}</p><ul>${m.map(p => {
-      const cx = conexoesDe(p).map(c => `${c.tipo} de ${c.outro.nome}`).join("; ");
-      return `<li><b>${esc(p.nome)}</b> [Rank ${p.rank}]: ${esc(p.tecnica)}${cx ? ` <i>(${esc(cx)})</i>` : ""}</li>`;
-    }).join("")}</ul></div>`;
-  });
-  return h;
+// O que a aba aberta mostra
+function doQueEstaAberto() {
+  const aba = document.querySelector(".pane.on")?.id;
+  if (aba === "meus" && window.meusAnimeAtual) return window.meusAnimeAtual();
+  if (aba === "criador") return sistemaAtual();
+  return catalogo();
 }
-window.prepararRelatorio = () => { $("#relatorio").innerHTML = htmlRelatorio(); };
-window.addEventListener("beforeprint", window.prepararRelatorio);
-$("#baixarPdf").onclick = () => { window.prepararRelatorio(); window.print(); };
-$("#baixarTxt").onclick = () => {
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([textoCompleto()], { type: "text/plain;charset=utf-8" }));
-  a.download = "forja-de-poder.txt"; a.click();
+window.exportar = {
+  pdf(d) {
+    $("#relatorio").innerHTML = d.html;
+    const t = document.title; document.title = d.nome; // nome sugerido do PDF
+    window.print();
+    setTimeout(() => { document.title = t; }, 1000);
+  },
+  txt(d) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([d.texto], { type: "text/plain;charset=utf-8" }));
+    a.download = d.nome + ".txt"; a.click();
+  }
 };
+window.prepararRelatorio = () => { $("#relatorio").innerHTML = doQueEstaAberto().html; };
+window.addEventListener("beforeprint", () => { if (!$("#relatorio").innerHTML) window.prepararRelatorio(); });
+window.addEventListener("afterprint", () => { $("#relatorio").innerHTML = ""; });
+$("#baixarPdf").onclick = () => window.exportar.pdf(doQueEstaAberto());
+$("#baixarTxt").onclick = () => window.exportar.txt(doQueEstaAberto());
+$("#pdfSistema").onclick = () => window.exportar.pdf(sistemaAtual());
+$("#txtSistema").onclick = () => window.exportar.txt(sistemaAtual());
 
 $("#sNome").value = S.nome; $("#sEnergia").value = S.energia;
 tudo();

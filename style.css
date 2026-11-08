@@ -79,6 +79,10 @@ textarea{background:var(--card);border:1px solid var(--line);color:var(--txt);pa
   #relatorio ul{margin:4pt 0 0;padding-left:16pt}
   #relatorio .bloco{break-inside:avoid}
   #relatorio .quebra{break-before:page}
+  #relatorio img{max-width:100%;max-height:120mm;display:block;margin:6pt 0;border:1px solid #ccc}
+  #relatorio .pessoa{border-top:1px solid #bbb;padding-top:6pt;margin-top:8pt}
+  #relatorio .corFam{display:inline-block;width:10pt;height:10pt;border-radius:50%;margin-right:5pt;border:1px solid #888;vertical-align:middle;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #relatorio small{font-weight:normal}
 }
 p.mini{flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px}
 .sis,.per{min-width:0}
@@ -95,3 +99,4 @@ p.mini{flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px}
 .mapaFam .rotulo.claro{fill:#fff;font-size:18px}
 .mapaFam .n{cursor:pointer}
 .extras img{width:100%;border-radius:6px;display:block}
+.baixarAnime{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:14px 0}

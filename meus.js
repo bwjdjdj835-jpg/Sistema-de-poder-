@@ -58,7 +58,10 @@ function render() {
       <textarea data-k="descricao" rows="3" aria-label="Descrição">${esc(p.descricao)}</textarea>
       <label class="mini muted">Character design (visual) <textarea data-k="design" rows="3" placeholder="Roupa, cabelo, cores, detalhes do poder">${esc(p.design || "")}</textarea></label>
       <p class="mini"><button class="btn ghost sm" data-prompt>Copiar prompt da ficha</button><button class="btn ghost sm" data-del>Remover personagem</button></p>
-    </article>`).join("")}</div>`;
+    </article>`).join("")}</div>
+    <div class="baixarAnime"><b>Baixar só este anime:</b> <button class="btn sm" data-exp="pdf">Baixar PDF</button> <button class="btn ghost sm" data-exp="txt">Baixar TXT</button></div>`;
+  $("#meuAnime").insertAdjacentHTML("afterbegin", `<div class="baixarAnime"><b>Baixar só este anime:</b> <button class="btn sm" data-exp="pdf">Baixar PDF</button> <button class="btn ghost sm" data-exp="txt">Baixar TXT</button></div>`);
+  document.querySelectorAll("#meuAnime [data-exp]").forEach(b => b.onclick = () => window.exportar[b.dataset.exp](window.meusAnimeAtual()));
 
   $("#mTitulo").oninput = e => { A.titulo = e.target.value; save(); $("#meusLista .chip.on").textContent = A.titulo; };
   $("#mStatus").oninput = e => { A.status = e.target.value; save(); };
@@ -165,16 +168,46 @@ function familiasHtml(A, s) {
     }).join("")}</div>`;
 }
 
-// Usado pelo PDF/TXT
-window.meusTexto = () => M.map(a => [
-  `${a.titulo} [${a.status}]`, a.cidade ? "Cidade: " + a.cidade : "", a.sinopse, "Sistemas de poder:",
-  ...a.sistemas.map(s => `  * ${s.nome} (${s.tipo}): ${s.descricao}${(s.regras || []).length ? "\n" + s.regras.map(r => "      - " + r).join("\n") : ""}${(s.familias || []).map(f => `\n    > ${f.nome} — ${f.poder}: ${f.resumo}\n${(f.eras || []).map(e => "        · " + e).join("\n")}`).join("")}`),
-  "Personagens:",
-  ...a.personagens.map(p => `  - ${p.nome} — ${p.titulo}${p.sistema ? " · " + p.sistema : ""}${p.familia ? " · família: " + p.familia : ""}: ${p.poder}. ${p.descricao}${p.design && p.design !== "Já tem ficha." ? "\n      Design: " + p.design : ""}`), ""
-].join("\n")).join("\n");
-window.meusHtml = () => M.map(a => `<div class="bloco"><h3>${esc(a.titulo)}</h3><p><i>${esc(a.status)}</i>${a.cidade ? " · Cidade: " + esc(a.cidade) : ""}</p><p>${esc(a.sinopse)}</p>
-  ${a.sistemas.map(s => `<p><b>${esc(s.nome)}</b> (${esc(s.tipo)}): ${esc(s.descricao)}</p>${(s.regras || []).length ? `<ul>${s.regras.map(r => `<li>${esc(r)}</li>`).join("")}</ul>` : ""}${(s.familias || []).map(f => `<p><b>${esc(f.nome)}</b> — ${esc(f.poder)}: ${esc(f.resumo)}</p><ol>${(f.eras || []).map(e => `<li>${esc(e)}</li>`).join("")}</ol>`).join("")}`).join("")}
-  <ul>${a.personagens.map(p => `<li><b>${esc(p.nome)}</b> — ${esc(p.titulo)}${p.sistema ? " · " + esc(p.sistema) : ""}${p.familia ? " · família: " + esc(p.familia) : ""}: ${esc(p.poder)}. ${esc(p.descricao)}</li>`).join("")}</ul></div>`).join("");
+// ---------- PDF / TXT de um anime só ----------
+const textoAnime = a => [
+  a.titulo.toUpperCase(), a.status ? "Status: " + a.status : "", a.cidade ? "Cidade: " + a.cidade : "", "", a.sinopse, "",
+  ...a.sistemas.flatMap(s => [
+    `=== SISTEMA DE PODER: ${s.nome} (${s.tipo}) ===`, s.descricao,
+    ...(s.regras || []).map(r => "  - " + r), "",
+    ...(s.familias || []).flatMap(f => [`> ${f.nome} — ${f.poder}`, "  " + f.resumo, ...(f.eras || []).map(e => "    · " + e),
+      "  Personagens: " + (a.personagens.filter(p => p.familia === f.nome).map(p => p.nome).join(", ") || "nenhum ainda"), ""])
+  ]),
+  `=== PERSONAGENS (${a.personagens.length}) ===`, "",
+  ...a.personagens.flatMap(p => [
+    `${p.nome} — ${p.titulo}`,
+    `  Sistema: ${p.sistema || "sem sistema"}${p.familia ? " · Família: " + p.familia : ""}`,
+    `  Poder: ${p.poder}`, `  ${p.descricao}`,
+    ...(p.design && p.design !== "Já tem ficha." ? ["  Design: " + p.design] : []), ""
+  ])
+].join("\n");
+
+const htmlAnime = a => {
+  const img = (u, alt) => u ? `<img src="${esc(u)}" alt="${esc(alt)}">` : "";
+  const pers = p => `<div class="bloco pessoa">${img(p.imagem, "Ficha de " + p.nome)}<h3>${esc(p.nome)}</h3><p><i>${esc(p.titulo)}</i></p>
+    <p><b>Sistema:</b> ${esc(p.sistema || "sem sistema")}${p.familia ? ` · <b>Família:</b> ${esc(p.familia)}` : ""}</p>
+    <p><b>Poder:</b> ${esc(p.poder)}</p><p>${esc(p.descricao)}</p>${p.design && p.design !== "Já tem ficha." ? `<p><b>Design:</b> ${esc(p.design)}</p>` : ""}</div>`;
+  let h = `<h1>${esc(a.titulo)}</h1><p><i>${esc(a.status || "")}</i>${a.cidade ? ` · <b>Cidade:</b> ${esc(a.cidade)}` : ""}</p><p>${esc(a.sinopse)}</p>`;
+  a.sistemas.forEach(s => {
+    h += `<h2>Sistema de poder: ${esc(s.nome)} <small>(${esc(s.tipo)})</small></h2><p>${esc(s.descricao)}</p>`;
+    if ((s.regras || []).length) h += `<ul>${s.regras.map(r => `<li>${esc(r)}</li>`).join("")}</ul>`;
+    (s.imagens || []).forEach(u => h += `<div class="bloco">${img(u, "Imagem de " + s.nome)}</div>`);
+    (s.familias || []).forEach(f => {
+      const m = a.personagens.filter(p => p.familia === f.nome);
+      h += `<div class="bloco"><h3><span class="corFam" style="background:${esc(f.cor)}"></span>${esc(f.nome)} — ${esc(f.poder)}</h3><p>${esc(f.resumo)}</p>
+        <ol>${(f.eras || []).map(e => `<li>${esc(e)}</li>`).join("")}</ol><p><b>Personagens:</b> ${m.map(p => esc(p.nome)).join(", ") || "nenhum ainda"}</p>
+        ${(f.imagens || []).map(u => img(u, "Ficha da família " + f.nome)).join("")}</div>`;
+    });
+  });
+  h += `<h2 class="quebra">Personagens (${a.personagens.length})</h2>` + a.personagens.map(pers).join("");
+  return h;
+};
+const arquivo = t => (t || "anime").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^\w]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+window.meusAnimeAtual = () => { const a = M[atual]; return { nome: arquivo(a.titulo), titulo: a.titulo, texto: textoAnime(a), html: htmlAnime(a) }; };
 
 render();
 })();
