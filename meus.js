@@ -29,12 +29,14 @@ function render() {
     <div class="cabecalho">
       <label>Nome do anime <input id="mTitulo" value="${esc(A.titulo)}"></label>
       <label>Status <input id="mStatus" value="${esc(A.status)}"></label>
+      <label class="largo">Cidade / onde se passa <input id="mCidade" value="${esc(A.cidade || "")}" placeholder="Ex.: Nova York, 2026"></label>
       <label class="largo">Sinopse <textarea id="mSinopse" rows="2">${esc(A.sinopse)}</textarea></label>
     </div>
     <h2 class="sec">Sistemas de poder <span class="muted">(${A.sistemas.length})</span> <button class="btn ghost sm" id="mAddSis">+ Sistema</button></h2>
     <div class="cards">${A.sistemas.map((s, i) => `<article class="card sis" data-i="${i}">
       <div class="linha"><input data-k="nome" value="${esc(s.nome)}" class="forte" aria-label="Nome do sistema"><input data-k="tipo" value="${esc(s.tipo)}" aria-label="Tipo" class="tipo"></div>
       <textarea data-k="descricao" rows="3" aria-label="Descrição">${esc(s.descricao)}</textarea>
+      ${(s.imagens || []).length ? `<div class="extras">${s.imagens.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="Imagem do sistema ${esc(s.nome)}" loading="lazy"></a>`).join("")}</div>` : ""}
       <label class="muted mini">Regras (uma por linha)</label>
       <textarea data-k="regras" rows="3" aria-label="Regras">${esc((s.regras || []).join("\n"))}</textarea>
       ${(() => { const f = [...new Set(A.personagens.filter(p => p.sistema === s.nome && p.familia).map(p => p.familia))]; return f.length ? `<p class="mini"><b>Famílias:</b> ${f.map(esc).join(", ")}</p>` : ""; })()}
@@ -54,11 +56,13 @@ function render() {
       <label class="mini muted">Família <input data-k="familia" value="${esc(p.familia || "")}" placeholder="Família / linhagem"></label>
       <label class="mini muted">Poder <input data-k="poder" value="${esc(p.poder)}"></label>
       <textarea data-k="descricao" rows="3" aria-label="Descrição">${esc(p.descricao)}</textarea>
-      <button class="btn ghost sm" data-del>Remover personagem</button>
+      <label class="mini muted">Character design (visual) <textarea data-k="design" rows="3" placeholder="Roupa, cabelo, cores, detalhes do poder">${esc(p.design || "")}</textarea></label>
+      <p class="mini"><button class="btn ghost sm" data-prompt>Copiar prompt da ficha</button><button class="btn ghost sm" data-del>Remover personagem</button></p>
     </article>`).join("")}</div>`;
 
   $("#mTitulo").oninput = e => { A.titulo = e.target.value; save(); $("#meusLista .chip.on").textContent = A.titulo; };
   $("#mStatus").oninput = e => { A.status = e.target.value; save(); };
+  $("#mCidade").oninput = e => { A.cidade = e.target.value; save(); };
   $("#mSinopse").oninput = e => { A.sinopse = e.target.value; save(); };
   $("#mAddSis").onclick = () => { A.sistemas.push({ nome: "Novo sistema", tipo: "", descricao: "", regras: [] }); save(); render(); };
   $("#mAddPers").onclick = () => { A.personagens.push({ nome: "Novo personagem", titulo: "", sistema: filtro === "__sem" ? "" : filtro, familia: "", poder: "", descricao: "", imagem: "" }); filtro = ""; save(); render(); };
@@ -98,6 +102,11 @@ function render() {
     const p = A.personagens[card.dataset.i];
     card.querySelectorAll("[data-k]").forEach(el => el[el.tagName === "SELECT" ? "onchange" : "oninput"] = () => { p[el.dataset.k] = el.value; save(); });
     card.querySelector("[data-del]").onclick = () => { A.personagens.splice(card.dataset.i, 1); save(); render(); };
+    card.querySelector("[data-prompt]").onclick = async () => {
+      const t = `Anime character design sheet, 16:9, light beige background, clean lineart with soft colors. Title: "${p.nome}" — ${p.titulo}. Anime: ${A.titulo}${A.cidade ? ", set in " + A.cidade : ""}. Look: ${p.design || p.descricao}. Power: ${p.poder}${p.familia ? " (" + p.familia + ")" : ""}. Include: full body front, profile and back views; 4 facial expressions; close-ups of hands and power effect; one action pose.`;
+      try { await navigator.clipboard.writeText(t); aviso("Prompt copiado. Cole no seu gerador de imagens."); }
+      catch { aviso("Não deu para copiar automaticamente."); }
+    };
     card.querySelector("[data-img]").onchange = e => {
       const f = e.target.files[0]; if (!f) return;
       const img = new Image();
@@ -139,15 +148,15 @@ function familiasHtml(A, s) {
     svg += `<g class="n" data-verfam="${esc(f.nome)}"><circle cx="${x}" cy="${y}" r="34" fill="${esc(f.cor)}" stroke="var(--bg)" stroke-width="3"/><text x="${x}" y="${y + 4}" text-anchor="middle" class="rotulo" style="fill:${textoSobre(f.cor)}">${esc(f.nome.replace(/^Kore /, "").replace(/ \(.*\)/, ""))}</text></g>`;
   });
   svg += `<circle r="52" fill="var(--acc2)"/><text y="5" text-anchor="middle" class="rotulo claro">${esc(s.nome)}</text>`;
-  return `<h2 class="sec">Famílias do ${esc(s.nome)} <span class="muted">(${F.length})</span> <button class="btn ghost sm" data-addfam="${si}">+ Família</button></h2>
-    <div class="mapaFam"><svg viewBox="-470 -360 940 720" role="img" aria-label="Mapa das famílias do ${esc(s.nome)}">${svg}</svg><p class="muted mini">Clique numa família para ver os personagens dela.</p></div>
+  return `<h2 class="sec">Famílias / raças — ${esc(s.nome)} <span class="muted">(${F.length})</span> <button class="btn ghost sm" data-addfam="${si}">+ Família</button></h2>
+    <div class="mapaFam"><svg viewBox="-480 -400 960 800" role="img" aria-label="Mapa das famílias do ${esc(s.nome)}">${svg}</svg><p class="muted mini">Clique numa família para ver os personagens dela.</p></div>
     <div class="cards">${F.map((f, i) => {
       const m = A.personagens.filter(p => p.familia === f.nome);
       return `<article class="card fam" data-s="${si}" data-i="${i}" style="--c:${esc(f.cor)}">
         <div class="linha"><input data-fk="nome" value="${esc(f.nome)}" class="forte" aria-label="Nome da família"><input data-fk="cor" type="color" value="${esc(f.cor)}" aria-label="Cor" class="corInput"></div>
         <label class="mini muted">Poder <input data-fk="poder" value="${esc(f.poder)}"></label>
         <textarea data-fk="resumo" rows="3" aria-label="Resumo">${esc(f.resumo)}</textarea>
-        <label class="mini muted">Eras (uma por linha)</label>
+        <label class="mini muted">Eras / níveis (um por linha)</label>
         <textarea data-fk="eras" rows="5" aria-label="Eras">${esc((f.eras || []).join("\n"))}</textarea>
         ${(f.imagens || []).length ? `<div class="extras">${f.imagens.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="Ficha da família ${esc(f.nome)}" loading="lazy"></a>`).join("")}</div>` : ""}
         <p class="mini"><b>Personagens:</b> ${m.length ? m.map(p => esc(p.nome)).join(", ") : "nenhum ainda"}</p>
@@ -158,12 +167,12 @@ function familiasHtml(A, s) {
 
 // Usado pelo PDF/TXT
 window.meusTexto = () => M.map(a => [
-  `${a.titulo} [${a.status}]`, a.sinopse, "Sistemas de poder:",
+  `${a.titulo} [${a.status}]`, a.cidade ? "Cidade: " + a.cidade : "", a.sinopse, "Sistemas de poder:",
   ...a.sistemas.map(s => `  * ${s.nome} (${s.tipo}): ${s.descricao}${(s.regras || []).length ? "\n" + s.regras.map(r => "      - " + r).join("\n") : ""}${(s.familias || []).map(f => `\n    > ${f.nome} — ${f.poder}: ${f.resumo}\n${(f.eras || []).map(e => "        · " + e).join("\n")}`).join("")}`),
   "Personagens:",
-  ...a.personagens.map(p => `  - ${p.nome} — ${p.titulo}${p.sistema ? " · " + p.sistema : ""}${p.familia ? " · família: " + p.familia : ""}: ${p.poder}. ${p.descricao}`), ""
+  ...a.personagens.map(p => `  - ${p.nome} — ${p.titulo}${p.sistema ? " · " + p.sistema : ""}${p.familia ? " · família: " + p.familia : ""}: ${p.poder}. ${p.descricao}${p.design && p.design !== "Já tem ficha." ? "\n      Design: " + p.design : ""}`), ""
 ].join("\n")).join("\n");
-window.meusHtml = () => M.map(a => `<div class="bloco"><h3>${esc(a.titulo)}</h3><p><i>${esc(a.status)}</i></p><p>${esc(a.sinopse)}</p>
+window.meusHtml = () => M.map(a => `<div class="bloco"><h3>${esc(a.titulo)}</h3><p><i>${esc(a.status)}</i>${a.cidade ? " · Cidade: " + esc(a.cidade) : ""}</p><p>${esc(a.sinopse)}</p>
   ${a.sistemas.map(s => `<p><b>${esc(s.nome)}</b> (${esc(s.tipo)}): ${esc(s.descricao)}</p>${(s.regras || []).length ? `<ul>${s.regras.map(r => `<li>${esc(r)}</li>`).join("")}</ul>` : ""}${(s.familias || []).map(f => `<p><b>${esc(f.nome)}</b> — ${esc(f.poder)}: ${esc(f.resumo)}</p><ol>${(f.eras || []).map(e => `<li>${esc(e)}</li>`).join("")}</ol>`).join("")}`).join("")}
   <ul>${a.personagens.map(p => `<li><b>${esc(p.nome)}</b> — ${esc(p.titulo)}${p.sistema ? " · " + esc(p.sistema) : ""}${p.familia ? " · família: " + esc(p.familia) : ""}: ${esc(p.poder)}. ${esc(p.descricao)}</li>`).join("")}</ul></div>`).join("");
 

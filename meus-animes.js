@@ -1,7 +1,7 @@
 // Seus animes autorais. Este arquivo é a cópia salva no repositório.
 // Edições feitas no app ficam no navegador; use "Copiar dados" e mande para salvar aqui.
 // Textos marcados "(rascunho)" foram tirados das fichas de personagem e precisam da sua confirmação.
-window.MEUS_VERSAO = 3;
+window.MEUS_VERSAO = 4;
 window.MEUS_ANIMES = [
   {
     id: "anime-1",
@@ -57,14 +57,432 @@ window.MEUS_ANIMES = [
       { nome: "Mestre dos Tecidos (nome a definir)", titulo: "A definir", sistema: "", poder: "Dá força e forma a objetos e tecidos (rascunho)", descricao: "Velho mestre com marcas douradas nos braços. Treina um garoto numa arena com golems de pedra.", imagem: "img/mestre-tecidos.jpg" }
     ]
   },
-  {
-    id: "anime-2",
-    titulo: "Anime 2 (nome a definir)",
-    status: "Só o protagonista",
-    sinopse: "A definir.",
-    sistemas: [],
-    personagens: [
-      { nome: "Protagonista (aguardando dados)", titulo: "Protagonista", sistema: "", poder: "A definir", descricao: "Mande a ficha do protagonista para eu salvar aqui.", imagem: "" }
+{
+    "id": "anime-2",
+    "titulo": "Caixa de Pandora (nome a definir)",
+    "status": "Em criação: 30 personagens propostos",
+    "sinopse": "Nova York, 2026. Num túnel abandonado do metrô, um arqueólogo acha a Caixa de Pandora: um artefato alienígena de 5 metros feito pelo Concílio das Sete Raças. Os Anunnaki, líderes do Concílio, foram os criadores dos humanos. A Caixa guarda milhões de DNAs alienígenas e nanites pretos. Cano Curto, de 19 anos, senta na cadeira de escaneamento e tem o DNA reescrito. Agora o Instituto Prometeu quer copiá-lo, e Ensar, um Anunnaki exilado, quer usar a Caixa para refazer a humanidade.",
+    "cidade": "Nova York (proposta, por causa do NYR na jaqueta do Cano)",
+    "sistemas": [
+      {
+        "nome": "Caixa de Pandora",
+        "tipo": "DNA alienígena + nanites",
+        "descricao": "A Caixa escaneia a energia vital e o perfil emocional da pessoa na cadeira. Depois escolhe um DNA do Arquivo Xenogenético e aplica com micro-agulhas. Os nanites pretos integram o DNA ao corpo. Cada pessoa recebe o DNA de uma das 7 raças, e cada raça dá um poder diferente.",
+        "regras": [
+          "Cada hospedeiro tem uma raça dominante",
+          "A compatibilidade depende das emoções na hora do escaneamento",
+          "DNA copiado em laboratório (Instituto Prometeu) é instável e cobra do corpo",
+          "Os nanites gastam energia: usar o poder dá fome e cansaço",
+          "Exceção: Cano Curto carrega as 7 raças; só a Anunnaki despertou"
+        ],
+        "imagens": [
+          "img/caixa-de-pandora.jpg"
+        ],
+        "familias": [
+          {
+            "nome": "Anunnaki",
+            "cor": "#d4a72c",
+            "poder": "Energia e engenharia genética",
+            "resumo": "Criadores dos humanos e líderes do Concílio das Sete Raças. O DNA deles libera pulsos de energia vital e permite reescrever o próprio corpo.",
+            "eras": [
+              "Nível 1: filamentos dourados na pele",
+              "Nível 2: pulso de energia pelas mãos",
+              "Nível 3: escudo e regeneração celular",
+              "Nível 4: reescreve o próprio DNA em combate",
+              "Nível 5: lê e altera o DNA de outros (proibido)"
+            ],
+            "imagens": [
+              "img/ezen-anunnaki.jpg"
+            ]
+          },
+          {
+            "nome": "Velthari",
+            "cor": "#7fc8d8",
+            "poder": "Cristal e blindagem",
+            "resumo": "Raça de corpos cristalinos de um planeta de alta gravidade. O DNA endurece a pele em placas de cristal.",
+            "eras": [
+              "Nível 1: pele mais densa",
+              "Nível 2: placas de cristal",
+              "Nível 3: armadura completa",
+              "Nível 4: lança cristais",
+              "Nível 5: corpo inteiro de cristal (quase indestrutível, mas lento)"
+            ],
+            "imagens": []
+          },
+          {
+            "nome": "Ozzrak",
+            "cor": "#6f8f3a",
+            "poder": "Predador: regeneração e sentidos",
+            "resumo": "Caçadores reptilianos. O DNA dá garras, sentidos aguçados e regeneração rápida, mas aumenta a agressividade.",
+            "eras": [
+              "Nível 1: olfato e visão noturna",
+              "Nível 2: garras",
+              "Nível 3: regeneração rápida",
+              "Nível 4: escamas e força bruta",
+              "Nível 5: fúria predadora (perde o controle)"
+            ],
+            "imagens": []
+          },
+          {
+            "nome": "Myrr",
+            "cor": "#3fa7a0",
+            "poder": "Telepatia e água",
+            "resumo": "Seres aquáticos que vivem em mente coletiva. O DNA permite sentir emoções, ler pensamentos de superfície e mover líquidos.",
+            "eras": [
+              "Nível 1: sente emoções próximas",
+              "Nível 2: move pequenas quantidades de água",
+              "Nível 3: lê pensamentos de superfície",
+              "Nível 4: ondas e controle de líquidos do corpo",
+              "Nível 5: liga várias mentes numa rede"
+            ],
+            "imagens": []
+          },
+          {
+            "nome": "Siravex",
+            "cor": "#9fb63a",
+            "poder": "Enxame e colmeia",
+            "resumo": "Insectoides que vivem em colmeia. O DNA permite comandar enxames (insetos, nanites, drones) e criar exoesqueleto.",
+            "eras": [
+              "Nível 1: ouve o zumbido das colmeias",
+              "Nível 2: comanda pequenos enxames",
+              "Nível 3: exoesqueleto parcial",
+              "Nível 4: comanda nanites e drones",
+              "Nível 5: mente de colmeia (perde a individualidade)"
+            ],
+            "imagens": []
+          },
+          {
+            "nome": "Khaal",
+            "cor": "#e8642c",
+            "poder": "Plasma, luz e calor",
+            "resumo": "Seres nascidos perto de estrelas. O DNA gera calor, luz e plasma, e permite voos curtos.",
+            "eras": [
+              "Nível 1: corpo quente, olhos que brilham",
+              "Nível 2: mãos em brasa",
+              "Nível 3: rajadas de plasma",
+              "Nível 4: voo curto",
+              "Nível 5: forma estelar (pode se consumir)"
+            ],
+            "imagens": []
+          },
+          {
+            "nome": "Noctivar",
+            "cor": "#4b3a78",
+            "poder": "Vácuo e distorção do espaço",
+            "resumo": "Raça do espaço profundo, quase sem corpo físico. O DNA distorce a luz e o espaço: invisibilidade, passos curtos pelo vácuo, peso.",
+            "eras": [
+              "Nível 1: some das câmeras",
+              "Nível 2: invisibilidade parcial",
+              "Nível 3: passo de vácuo (teleporte curto)",
+              "Nível 4: altera a gravidade local",
+              "Nível 5: abre fendas no espaço"
+            ],
+            "imagens": []
+          }
+        ]
+      }
+    ],
+    "personagens": [
+      {
+        "nome": "Cano Curto",
+        "titulo": "Protagonista, 19 anos",
+        "sistema": "Caixa de Pandora",
+        "familia": "Anunnaki",
+        "poder": "Pulso de energia; nanites pretos com filamentos laranja nas mãos. É uma anomalia: a Caixa gravou nele DNA das 7 raças, mas só o Anunnaki despertou.",
+        "descricao": "Ligação com a Caixa: Foi o primeiro humano em milhares de anos a sentar na cadeira de escaneamento. A Caixa o escolheu e agora só abre com ele.",
+        "design": "Já tem ficha.",
+        "imagem": "img/cano-curto.jpg"
+      },
+      {
+        "nome": "Ezen",
+        "titulo": "Mentor; guardião Anunnaki da Caixa",
+        "sistema": "Caixa de Pandora",
+        "familia": "Anunnaki",
+        "poder": "Escudos e pulso de energia; a pulseira dele é a chave da Caixa.",
+        "descricao": "Ligação com a Caixa: Ficou na Terra para vigiar a Caixa. Ensina Cano a controlar o DNA.",
+        "design": "Já tem ficha.",
+        "imagem": "img/ezen-anunnaki.jpg"
+      },
+      {
+        "nome": "Ensar, o Arquivista Exilado",
+        "titulo": "Vilão principal",
+        "sistema": "Caixa de Pandora",
+        "familia": "Anunnaki",
+        "poder": "Nível 5 Anunnaki: lê e reescreve o DNA de outras pessoas.",
+        "descricao": "Ligação com a Caixa: Foi um dos construtores da Caixa e foi expulso do Concílio. Quer usar o Arquivo Xenogenético para criar uma 'humanidade 2.0' obediente.",
+        "design": "Anunnaki alto, pele cinza-violeta escura, olhos brancos sem pupila, manto branco com placas douradas rachadas e uma coroa de filamentos de dados flutuando atrás da cabeça.",
+        "imagem": ""
+      },
+      {
+        "nome": "Dante Kreyl",
+        "titulo": "Antagonista; caçador do Instituto Prometeu, 24 anos",
+        "sistema": "Caixa de Pandora",
+        "familia": "Ozzrak",
+        "poder": "Regeneração, garras e faro. O DNA dele é uma cópia de laboratório, instável.",
+        "descricao": "Ligação com a Caixa: Recebeu uma amostra roubada da Caixa. Caça Cano para levá-lo ao Instituto, mas tem o próprio código de honra.",
+        "design": "Casaco tático preto, cicatrizes que se fecham sozinhas, olhos amarelos em fenda e braço direito coberto de escamas verdes.",
+        "imagem": ""
+      },
+      {
+        "nome": "Dra. Helena Voss",
+        "titulo": "Diretora do Instituto Prometeu",
+        "sistema": "",
+        "familia": "",
+        "poder": "Nenhum poder; controla a tecnologia de cópia de DNA.",
+        "descricao": "Ligação com a Caixa: Quer replicar a Caixa e vender DNA alienígena. Financia Ensar sem saber o plano real dele.",
+        "design": "Jaleco branco longo, cabelo grisalho preso, óculos finos, luvas pretas e o crachá do Instituto Prometeu (símbolo de uma chama dentro de um cubo).",
+        "imagem": ""
+      },
+      {
+        "nome": "Lia Moraes",
+        "titulo": "Melhor amiga, hacker",
+        "sistema": "Caixa de Pandora",
+        "familia": "Siravex",
+        "poder": "Comanda enxames de nanites e drones.",
+        "descricao": "Ligação com a Caixa: Estava junto quando Cano abriu a Caixa e recebeu uma dose pequena de nanites.",
+        "design": "Moletom amarelo grande, fones no pescoço, óculos com lente rachada e antenas finas de luz que aparecem na testa quando usa o poder.",
+        "imagem": ""
+      },
+      {
+        "nome": "Teo 'Bigorna' Batista",
+        "titulo": "Aliado, lutador",
+        "sistema": "Caixa de Pandora",
+        "familia": "Velthari",
+        "poder": "Pele de cristal blindada.",
+        "descricao": "Ligação com a Caixa: Recebeu o DNA tentando proteger Cano dentro da Caixa.",
+        "design": "Grandão de regata, braços e ombros com placas de cristal azul-claro, faixa de boxe nas mãos.",
+        "imagem": ""
+      },
+      {
+        "nome": "Nara Okafor",
+        "titulo": "Aliada, estudante de medicina",
+        "sistema": "Caixa de Pandora",
+        "familia": "Myrr",
+        "poder": "Sente emoções e move líquidos.",
+        "descricao": "Ligação com a Caixa: Atendeu Cano depois da primeira integração e foi contaminada pelos nanites do sangue dele.",
+        "design": "Tranças longas, guelras discretas no pescoço, olhos turquesa e jaleco de estágio com mangas dobradas.",
+        "imagem": ""
+      },
+      {
+        "nome": "Ícaro Lin",
+        "titulo": "Aliado, motoboy",
+        "sistema": "Caixa de Pandora",
+        "familia": "Khaal",
+        "poder": "Calor, luz e voo curto.",
+        "descricao": "Ligação com a Caixa: Fazia entregas perto do túnel onde a Caixa foi achada; um fragmento queimou o braço dele.",
+        "design": "Jaqueta de motoboy com faixa refletiva, capacete pendurado, cabelo preto com pontas que brilham como brasa.",
+        "imagem": ""
+      },
+      {
+        "nome": "Yara Kuen",
+        "titulo": "Aliada, ladra",
+        "sistema": "Caixa de Pandora",
+        "familia": "Noctivar",
+        "poder": "Invisibilidade e passo de vácuo.",
+        "descricao": "Ligação com a Caixa: Tentou roubar a Caixa para outra pessoa e foi marcada por ela.",
+        "design": "Capuz preto, roupa justa cinza, contornos do corpo que 'somem' em partes quando usa o poder.",
+        "imagem": ""
+      },
+      {
+        "nome": "Vó Celeste",
+        "titulo": "Guardiã humana da chave",
+        "sistema": "",
+        "familia": "",
+        "poder": "Sem poder; conhece a história da Caixa.",
+        "descricao": "Ligação com a Caixa: A família dela guardou a localização da Caixa por gerações. É a avó de Cano.",
+        "design": "Senhora baixinha de xale vinho, bengala com um cubo entalhado e óculos pendurados num cordão.",
+        "imagem": ""
+      },
+      {
+        "nome": "Rafa Curto",
+        "titulo": "Irmão mais novo de Cano, 12 anos",
+        "sistema": "",
+        "familia": "",
+        "poder": "Ainda sem poder.",
+        "descricao": "Ligação com a Caixa: A Caixa reagiu à presença dele uma vez; ninguém sabe por quê.",
+        "design": "Garoto de boné virado, camiseta grande demais e mochila cheia de chaveiros.",
+        "imagem": ""
+      },
+      {
+        "nome": "Mira Sato",
+        "titulo": "Cientista do Prometeu, agente dupla",
+        "sistema": "",
+        "familia": "",
+        "poder": "Sem DNA; usa luvas que controlam nanites.",
+        "descricao": "Ligação com a Caixa: Estuda os nanites da Caixa e passa informações para Cano em segredo.",
+        "design": "Jaleco cinza curto, cabelo chanel, luvas tecnológicas com luz azul e tablet sempre na mão.",
+        "imagem": ""
+      },
+      {
+        "nome": "Sargento Brak Holt",
+        "titulo": "Soldado do Prometeu",
+        "sistema": "Caixa de Pandora",
+        "familia": "Velthari",
+        "poder": "Armadura de cristal sintético.",
+        "descricao": "Ligação com a Caixa: Primeira cobaia bem-sucedida do Instituto com DNA copiado.",
+        "design": "Soldado enorme com uniforme tático do Prometeu e placas de cristal opaco e cinza nos braços.",
+        "imagem": ""
+      },
+      {
+        "nome": "Victor 'Agulha' Pell",
+        "titulo": "Assassino do Prometeu",
+        "sistema": "Caixa de Pandora",
+        "familia": "Siravex",
+        "poder": "Ferrões nos antebraços e veneno.",
+        "descricao": "Ligação com a Caixa: Recebeu DNA Siravex de laboratório; é leal só a Helena Voss.",
+        "design": "Magro, de terno preto justo, antebraços com ferrões que saem da pele e olhos com reflexo de inseto.",
+        "imagem": ""
+      },
+      {
+        "nome": "Kessler",
+        "titulo": "Piloto de drones do Prometeu",
+        "sistema": "Caixa de Pandora",
+        "familia": "Khaal",
+        "poder": "Plasma instável.",
+        "descricao": "Ligação com a Caixa: O DNA copiado está queimando o corpo dele por dentro.",
+        "design": "Piloto com macacão de voo, rosto com marcas de queimadura brilhantes e visor laranja.",
+        "imagem": ""
+      },
+      {
+        "nome": "Thessa",
+        "titulo": "Embaixadora Velthari",
+        "sistema": "Caixa de Pandora",
+        "familia": "Velthari",
+        "poder": "Corpo inteiro de cristal.",
+        "descricao": "Ligação com a Caixa: Veio à Terra para cobrar do Concílio a promessa de nunca reabrir a Caixa.",
+        "design": "Alienígena alta de cristal translúcido azul, com pequenos fragmentos flutuando em volta da cabeça.",
+        "imagem": ""
+      },
+      {
+        "nome": "Grul-Okk",
+        "titulo": "Caçador Ozzrak",
+        "sistema": "Caixa de Pandora",
+        "familia": "Ozzrak",
+        "poder": "Fúria predadora controlada.",
+        "descricao": "Ligação com a Caixa: Persegue Ensar há séculos; vê Cano como presa e aliado ao mesmo tempo.",
+        "design": "Reptiliano de 2,5 m, escamas verde-escuras, cicatrizes, colar de dentes e armadura de osso.",
+        "imagem": ""
+      },
+      {
+        "nome": "Ylmira",
+        "titulo": "Oráculo Myrr",
+        "sistema": "Caixa de Pandora",
+        "familia": "Myrr",
+        "poder": "Telepatia em rede.",
+        "descricao": "Ligação com a Caixa: Fala com Cano em sonhos pela parte Myrr do DNA dele, ainda dormente.",
+        "design": "Ser aquático de pele azul translúcida, sem boca, com tentáculos finos no lugar do cabelo, flutuando numa bolha de água.",
+        "imagem": ""
+      },
+      {
+        "nome": "Vexa, Rainha Siravex",
+        "titulo": "Rainha da colmeia",
+        "sistema": "Caixa de Pandora",
+        "familia": "Siravex",
+        "poder": "Mente de colmeia.",
+        "descricao": "Ligação com a Caixa: Quer de volta o DNA da sua raça guardado na Caixa.",
+        "design": "Insectoide alta de exoesqueleto dourado e preto, asas finas, coroa de antenas e quatro braços.",
+        "imagem": ""
+      },
+      {
+        "nome": "Solun",
+        "titulo": "Espírito Khaal do núcleo da Caixa",
+        "sistema": "Caixa de Pandora",
+        "familia": "Khaal",
+        "poder": "Forma estelar.",
+        "descricao": "Ligação com a Caixa: Uma consciência Khaal presa no núcleo de energia da Caixa.",
+        "design": "Silhueta humanoide feita de plasma laranja e branco, sem rosto, com anéis de luz girando no peito.",
+        "imagem": ""
+      },
+      {
+        "nome": "O Vazio",
+        "titulo": "Entidade Noctivar",
+        "sistema": "Caixa de Pandora",
+        "familia": "Noctivar",
+        "poder": "Abre fendas no espaço.",
+        "descricao": "Ligação com a Caixa: Quer fechar a Caixa para sempre, mesmo que isso apague todos os humanos com DNA.",
+        "design": "Recorte escuro em forma de pessoa, com estrelas dentro do corpo e bordas que tremem.",
+        "imagem": ""
+      },
+      {
+        "nome": "Marcus Reed",
+        "titulo": "Policial da cidade",
+        "sistema": "Caixa de Pandora",
+        "familia": "Myrr",
+        "poder": "Sente emoções (detector de mentira).",
+        "descricao": "Ligação com a Caixa: Foi contaminado na noite em que a Caixa foi aberta.",
+        "design": "Policial de uniforme azul-marinho amassado, barba por fazer, distintivo no cinto e olhos que ficam turquesa.",
+        "imagem": ""
+      },
+      {
+        "nome": "Priya Nair",
+        "titulo": "Streamer",
+        "sistema": "Caixa de Pandora",
+        "familia": "Khaal",
+        "poder": "Luz e calor.",
+        "descricao": "Ligação com a Caixa: Transmitiu ao vivo a abertura do túnel; o vídeo viralizou e a fez alvo.",
+        "design": "Jaqueta brilhante, celular num bastão, cabelo com mechas rosa e mãos que brilham.",
+        "imagem": ""
+      },
+      {
+        "nome": "Léo Duarte",
+        "titulo": "Gêmeo, skatista",
+        "sistema": "Caixa de Pandora",
+        "familia": "Velthari",
+        "poder": "Blindagem de cristal.",
+        "descricao": "Ligação com a Caixa: Ele e a irmã receberam DNAs opostos no mesmo dia.",
+        "design": "Skatista de bermuda e camisa xadrez aberta, joelhos e cotovelos de cristal.",
+        "imagem": ""
+      },
+      {
+        "nome": "Luna Duarte",
+        "titulo": "Gêmea, artista de rua",
+        "sistema": "Caixa de Pandora",
+        "familia": "Noctivar",
+        "poder": "Invisibilidade.",
+        "descricao": "Ligação com a Caixa: Irmã de Léo; o DNA dela rejeita o dele (não conseguem se tocar sem dor).",
+        "design": "Macacão sujo de tinta spray, cabelo preso com lápis, partes do corpo que ficam transparentes.",
+        "imagem": ""
+      },
+      {
+        "nome": "Pastor Elias Crow",
+        "titulo": "Líder do culto Filhos de Anu",
+        "sistema": "Caixa de Pandora",
+        "familia": "Anunnaki",
+        "poder": "Anunnaki corrompido: absorve energia de outros.",
+        "descricao": "Ligação com a Caixa: Adora a Caixa como deus e entrega fiéis a Ensar.",
+        "design": "Homem magro de terno branco, colarinho clerical, olhos dourados e marcas de filamentos pretos no pescoço.",
+        "imagem": ""
+      },
+      {
+        "nome": "Kai Moreno",
+        "titulo": "Ex-boxeador",
+        "sistema": "Caixa de Pandora",
+        "familia": "Ozzrak",
+        "poder": "Regeneração e força.",
+        "descricao": "Ligação com a Caixa: Comprou DNA no mercado negro do Prometeu; vira aliado depois.",
+        "design": "Boxeador de moletom com capuz, nariz quebrado, faixas nas mãos e escamas no pescoço.",
+        "imagem": ""
+      },
+      {
+        "nome": "Dr. Samuel Hart",
+        "titulo": "Arqueólogo que achou a Caixa",
+        "sistema": "",
+        "familia": "",
+        "poder": "Sem poder; morre no episódio 1.",
+        "descricao": "Ligação com a Caixa: Achou a Caixa num túnel abandonado do metrô. As memórias dele ficaram gravadas no Arquivo.",
+        "design": "Homem de 60 anos, chapéu de abas, colete de campo cheio de bolsos, lanterna na cabeça.",
+        "imagem": ""
+      },
+      {
+        "nome": "ECO",
+        "titulo": "Inteligência do Arquivo Xenogenético",
+        "sistema": "",
+        "familia": "",
+        "poder": "Controla a Caixa por dentro.",
+        "descricao": "Ligação com a Caixa: É a consciência do Arquivo, com milhões de DNAs alienígenas. Conversa com Cano e não tem lado.",
+        "design": "Holograma ciano de um rosto que muda a cada frase, misturando traços das 7 raças.",
+        "imagem": ""
+      }
     ]
   }
 ];
