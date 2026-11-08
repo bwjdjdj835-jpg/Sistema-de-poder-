@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Forja de Poder — Sistemas de Poder de Anime</title>
+<meta name="description" content="Explore sistemas de poder de animes de 2023 a 2025 e crie o seu, com linhagens e até 30+ personagens conectados.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1>⚡ Forja de Poder</h1>
+  <nav class="tabs">
+    <button class="tab on" data-tab="explorar">Explorar animes</button>
+    <button class="tab" data-tab="criador">Criar meu sistema</button>
+  </nav>
+</header>
+
+<section id="explorar" class="pane on">
+  <div class="bar">
+    <input id="filtro" type="search" placeholder="Filtrar por anime, sistema ou personagem…">
+    <select id="anoFiltro"><option value="">Todos os anos</option><option>2023</option><option>2024</option><option>2025</option></select>
+  </div>
+  <div id="catalogo" class="cards"></div>
+
+  <h2 class="sec">🌐 Buscar na web (MyAnimeList via Jikan)</h2>
+  <div class="bar">
+    <select id="webAno"><option>2023</option><option selected>2024</option><option>2025</option></select>
+    <select id="webTemp"><option value="winter">Inverno</option><option value="spring">Primavera</option><option value="summer">Verão</option><option value="fall">Outono</option></select>
+    <label class="chk"><input id="webAcao" type="checkbox" checked> Só ação / fantasia / sobrenatural</label>
+    <button id="webBuscar" class="btn">Buscar</button>
+  </div>
+  <p id="webStatus" class="muted"></p>
+  <div id="webLista" class="cards small"></div>
+</section>
+
+<section id="criador" class="pane">
+  <div class="cfg">
+    <label>Nome do sistema <input id="sNome" value="Ecos da Linhagem"></label>
+    <label>Energia <input id="sEnergia" value="Aether"></label>
+    <label>Linhagens <input id="sLin" type="number" min="2" max="20" value="8"></label>
+    <label>Personagens <input id="sPers" type="number" min="1" max="200" value="30"></label>
+    <button id="gerar" class="btn">🎲 Gerar sistema</button>
+  </div>
+  <div class="cfg">
+    <button id="addLin" class="btn ghost">+ Linhagem</button>
+    <button id="addPers" class="btn ghost">+ Personagem</button>
+    <button id="exportar" class="btn ghost">Exportar JSON</button>
+    <label class="btn ghost file">Importar JSON<input id="importar" type="file" accept=".json" hidden></label>
+  </div>
+
+  <div class="layout">
+    <div class="mapWrap"><svg id="mapa" viewBox="-580 -580 1160 1160"></svg><p class="muted">Clique numa linhagem ou personagem para destacar as conexões.</p></div>
+    <aside id="detalhe" class="detalhe"><p class="muted">Selecione algo no mapa.</p></aside>
+  </div>
+
+  <h2 class="sec">Linhagens</h2>
+  <div id="linhagens" class="cards"></div>
+  <h2 class="sec">Personagens <span id="contagem" class="muted"></span></h2>
+  <div class="tblWrap"><table id="tabela"><thead><tr><th>Nome</th><th>Linhagem</th><th>Poder</th><th>Técnica</th><th>Rank</th><th>Conexões</th><th></th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
