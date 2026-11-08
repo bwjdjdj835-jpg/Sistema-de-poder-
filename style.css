@@ -85,3 +85,13 @@ p.mini{flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px}
 .cards{grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr))}
 .cards.pers{grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr))}
 .tabs{flex-wrap:wrap}
+.fam{display:flex;flex-direction:column;gap:8px;border-top:5px solid var(--c);min-width:0}
+.fam input,.fam textarea{background:var(--bg);width:100%}
+.corInput{max-width:56px;padding:2px;height:40px}
+.mapaFam{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px;margin-bottom:12px;overflow-x:auto}
+.mapaFam svg{width:100%;min-width:520px;height:auto;display:block}
+.mapaFam text{fill:var(--txt);font-size:13px}
+.mapaFam .rotulo{font-weight:700;font-size:13px;fill:#111;pointer-events:none}
+.mapaFam .rotulo.claro{fill:#fff;font-size:18px}
+.mapaFam .n{cursor:pointer}
+.extras img{width:100%;border-radius:6px;display:block}

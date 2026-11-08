@@ -1,9 +1,9 @@
 (() => {
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const KEY = "forja-meus-v1";
+const KEY = "forja-meus-v" + (window.MEUS_VERSAO || 1);
 const copia = o => JSON.parse(JSON.stringify(o));
-let M, atual = 0, filtro = "";
+let M, atual = 0, filtro = "", filtroFam = "";
 
 try { M = JSON.parse(localStorage.getItem(KEY)); } catch {}
 if (!Array.isArray(M)) M = copia(window.MEUS_ANIMES || []);
@@ -24,7 +24,7 @@ function render() {
   $("#meusLista").querySelectorAll(".chip").forEach(b => b.onclick = () => { atual = +b.dataset.i; filtro = ""; render(); });
 
   const nomesSis = A.sistemas.map(s => s.nome);
-  const lista = A.personagens.map((p, i) => [p, i]).filter(([p]) => !filtro || (filtro === "__sem" ? !p.sistema : p.sistema === filtro));
+  const lista = A.personagens.map((p, i) => [p, i]).filter(([p]) => (!filtro || (filtro === "__sem" ? !p.sistema : p.sistema === filtro)) && (!filtroFam || p.familia === filtroFam));
   $("#meuAnime").innerHTML = `
     <div class="cabecalho">
       <label>Nome do anime <input id="mTitulo" value="${esc(A.titulo)}"></label>
@@ -40,7 +40,9 @@ function render() {
       ${(() => { const f = [...new Set(A.personagens.filter(p => p.sistema === s.nome && p.familia).map(p => p.familia))]; return f.length ? `<p class="mini"><b>Famílias:</b> ${f.map(esc).join(", ")}</p>` : ""; })()}
       <p class="muted mini">${A.personagens.filter(p => p.sistema === s.nome).length} personagens · <button class="btn ghost sm" data-del>Remover</button></p>
     </article>`).join("") || `<p class="muted">Nenhum sistema ainda. Clique em + Sistema.</p>`}</div>
+    ${A.sistemas.filter(s => (s.familias || []).length).map((s, si) => familiasHtml(A, s)).join("")}
     <h2 class="sec">Personagens <span class="muted">(${A.personagens.length})</span> <button class="btn ghost sm" id="mAddPers">+ Personagem</button></h2>
+    ${filtroFam ? `<p class="mini">Mostrando a família <b>${esc(filtroFam)}</b> · <button class="btn ghost sm" id="mLimpaFam">Mostrar todos</button></p>` : ""}
     <div class="filtros"><button class="chip ${!filtro ? "on" : ""}" data-f="">Todos</button><button class="chip ${filtro === "__sem" ? "on" : ""}" data-f="__sem">Sem sistema</button>${nomesSis.map(n => `<button class="chip ${filtro === n ? "on" : ""}" data-f="${esc(n)}">${esc(n)}</button>`).join("")}</div>
     <div class="cards pers">${lista.map(([p, i]) => `<article class="card per" data-i="${i}">
       ${p.imagem ? `<a href="${esc(p.imagem)}" target="_blank" rel="noopener"><img src="${esc(p.imagem)}" alt="Ficha de ${esc(p.nome)}" loading="lazy"></a>` : `<div class="semimg">Sem imagem</div>`}
@@ -61,6 +63,24 @@ function render() {
   $("#mAddSis").onclick = () => { A.sistemas.push({ nome: "Novo sistema", tipo: "", descricao: "", regras: [] }); save(); render(); };
   $("#mAddPers").onclick = () => { A.personagens.push({ nome: "Novo personagem", titulo: "", sistema: filtro === "__sem" ? "" : filtro, familia: "", poder: "", descricao: "", imagem: "" }); filtro = ""; save(); render(); };
   document.querySelectorAll("#meuAnime .filtros .chip").forEach(b => b.onclick = () => { filtro = b.dataset.f; render(); });
+  if ($("#mLimpaFam")) $("#mLimpaFam").onclick = () => { filtroFam = ""; render(); };
+  document.querySelectorAll("[data-verfam]").forEach(b => b.onclick = () => { filtroFam = b.dataset.verfam; filtro = ""; render(); $("#meuAnime .pers").scrollIntoView({ behavior: "smooth" }); });
+  document.querySelectorAll(".fam").forEach(card => {
+    const s = A.sistemas[card.dataset.s], f = s.familias[card.dataset.i];
+    card.querySelectorAll("[data-fk]").forEach(el => el.oninput = () => {
+      const k = el.dataset.fk;
+      if (k === "eras") f.eras = el.value.split("\n").filter(Boolean);
+      else if (k === "nome") { const velho = f.nome; f.nome = el.value; A.personagens.forEach(p => { if (p.familia === velho) p.familia = f.nome; }); }
+      else f[k] = el.value;
+      save();
+    });
+    card.querySelector("[data-fk=cor]").onchange = render;
+    card.querySelector("[data-delfam]").onclick = () => { s.familias.splice(card.dataset.i, 1); save(); render(); };
+  });
+  document.querySelectorAll("[data-addfam]").forEach(b => b.onclick = () => {
+    A.sistemas[b.dataset.addfam].familias.push({ nome: "Nova família", cor: "#888888", poder: "", resumo: "", eras: ["Era ancestral: ", "Era dos clãs: ", "Era dos reinos: ", "Era das escolas: ", "2026: "], imagens: [] });
+    save(); render();
+  });
 
   document.querySelectorAll("#meuAnime .sis").forEach(card => {
     const s = A.sistemas[card.dataset.i];
@@ -102,15 +122,49 @@ $("#meusRestaurar").onclick = () => {
   $("#meusRestaurar").dataset.ok = ""; $("#meusRestaurar").textContent = "Voltar ao salvo"; aviso("Voltou para a versão salva no repositório.");
 };
 
+const textoSobre = hex => { const n = parseInt(String(hex).replace("#", ""), 16); if (isNaN(n)) return "#111"; const l = .299 * (n >> 16) + .587 * (n >> 8 & 255) + .114 * (n & 255); return l > 140 ? "#111" : "#fff"; };
+function familiasHtml(A, s) {
+  const si = A.sistemas.indexOf(s), F = s.familias;
+  // mapa: sistema no centro, famílias em volta, herdeiros por fora
+  const R1 = 150, R2 = 290; let svg = "";
+  F.forEach((f, i) => {
+    const a = i / F.length * 2 * Math.PI - Math.PI / 2, x = R1 * Math.cos(a), y = R1 * Math.sin(a);
+    const m = A.personagens.filter(p => p.familia === f.nome), setor = 2 * Math.PI / F.length;
+    svg += `<line x1="0" y1="0" x2="${x}" y2="${y}" stroke="${esc(f.cor)}" stroke-width="3"/>`;
+    m.forEach((p, j) => {
+      const b = a - setor / 2 + setor * (j + .5) / m.length, px = R2 * Math.cos(b), py = R2 * Math.sin(b), esq = Math.cos(b) < -.2, dir = Math.cos(b) > .2;
+      svg += `<line x1="${x}" y1="${y}" x2="${px}" y2="${py}" stroke="${esc(f.cor)}" opacity=".6"/><circle cx="${px}" cy="${py}" r="9" fill="${esc(f.cor)}" stroke="var(--bg)" stroke-width="2"/>
+        <text x="${px + (esq ? -14 : dir ? 14 : 0)}" y="${py + (esq || dir ? 4 : py < 0 ? -14 : 22)}" text-anchor="${esq ? "end" : dir ? "start" : "middle"}">${esc(p.nome.replace(/ \(.*\)/, ""))}</text>`;
+    });
+    svg += `<g class="n" data-verfam="${esc(f.nome)}"><circle cx="${x}" cy="${y}" r="34" fill="${esc(f.cor)}" stroke="var(--bg)" stroke-width="3"/><text x="${x}" y="${y + 4}" text-anchor="middle" class="rotulo" style="fill:${textoSobre(f.cor)}">${esc(f.nome.replace(/^Kore /, "").replace(/ \(.*\)/, ""))}</text></g>`;
+  });
+  svg += `<circle r="52" fill="var(--acc2)"/><text y="5" text-anchor="middle" class="rotulo claro">${esc(s.nome)}</text>`;
+  return `<h2 class="sec">Famílias do ${esc(s.nome)} <span class="muted">(${F.length})</span> <button class="btn ghost sm" data-addfam="${si}">+ Família</button></h2>
+    <div class="mapaFam"><svg viewBox="-470 -360 940 720" role="img" aria-label="Mapa das famílias do ${esc(s.nome)}">${svg}</svg><p class="muted mini">Clique numa família para ver os personagens dela.</p></div>
+    <div class="cards">${F.map((f, i) => {
+      const m = A.personagens.filter(p => p.familia === f.nome);
+      return `<article class="card fam" data-s="${si}" data-i="${i}" style="--c:${esc(f.cor)}">
+        <div class="linha"><input data-fk="nome" value="${esc(f.nome)}" class="forte" aria-label="Nome da família"><input data-fk="cor" type="color" value="${esc(f.cor)}" aria-label="Cor" class="corInput"></div>
+        <label class="mini muted">Poder <input data-fk="poder" value="${esc(f.poder)}"></label>
+        <textarea data-fk="resumo" rows="3" aria-label="Resumo">${esc(f.resumo)}</textarea>
+        <label class="mini muted">Eras (uma por linha)</label>
+        <textarea data-fk="eras" rows="5" aria-label="Eras">${esc((f.eras || []).join("\n"))}</textarea>
+        ${(f.imagens || []).length ? `<div class="extras">${f.imagens.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="Ficha da família ${esc(f.nome)}" loading="lazy"></a>`).join("")}</div>` : ""}
+        <p class="mini"><b>Personagens:</b> ${m.length ? m.map(p => esc(p.nome)).join(", ") : "nenhum ainda"}</p>
+        <p class="mini"><button class="btn ghost sm" data-verfam="${esc(f.nome)}">Ver personagens</button><button class="btn ghost sm" data-delfam>Remover família</button></p>
+      </article>`;
+    }).join("")}</div>`;
+}
+
 // Usado pelo PDF/TXT
 window.meusTexto = () => M.map(a => [
   `${a.titulo} [${a.status}]`, a.sinopse, "Sistemas de poder:",
-  ...a.sistemas.map(s => `  * ${s.nome} (${s.tipo}): ${s.descricao}${(s.regras || []).length ? "\n" + s.regras.map(r => "      - " + r).join("\n") : ""}`),
+  ...a.sistemas.map(s => `  * ${s.nome} (${s.tipo}): ${s.descricao}${(s.regras || []).length ? "\n" + s.regras.map(r => "      - " + r).join("\n") : ""}${(s.familias || []).map(f => `\n    > ${f.nome} — ${f.poder}: ${f.resumo}\n${(f.eras || []).map(e => "        · " + e).join("\n")}`).join("")}`),
   "Personagens:",
   ...a.personagens.map(p => `  - ${p.nome} — ${p.titulo}${p.sistema ? " · " + p.sistema : ""}${p.familia ? " · família: " + p.familia : ""}: ${p.poder}. ${p.descricao}`), ""
 ].join("\n")).join("\n");
 window.meusHtml = () => M.map(a => `<div class="bloco"><h3>${esc(a.titulo)}</h3><p><i>${esc(a.status)}</i></p><p>${esc(a.sinopse)}</p>
-  ${a.sistemas.map(s => `<p><b>${esc(s.nome)}</b> (${esc(s.tipo)}): ${esc(s.descricao)}</p>${(s.regras || []).length ? `<ul>${s.regras.map(r => `<li>${esc(r)}</li>`).join("")}</ul>` : ""}`).join("")}
+  ${a.sistemas.map(s => `<p><b>${esc(s.nome)}</b> (${esc(s.tipo)}): ${esc(s.descricao)}</p>${(s.regras || []).length ? `<ul>${s.regras.map(r => `<li>${esc(r)}</li>`).join("")}</ul>` : ""}${(s.familias || []).map(f => `<p><b>${esc(f.nome)}</b> — ${esc(f.poder)}: ${esc(f.resumo)}</p><ol>${(f.eras || []).map(e => `<li>${esc(e)}</li>`).join("")}</ol>`).join("")}`).join("")}
   <ul>${a.personagens.map(p => `<li><b>${esc(p.nome)}</b> — ${esc(p.titulo)}${p.sistema ? " · " + esc(p.sistema) : ""}${p.familia ? " · família: " + esc(p.familia) : ""}: ${esc(p.poder)}. ${esc(p.descricao)}</li>`).join("")}</ul></div>`).join("");
 
 render();
