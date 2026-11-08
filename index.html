@@ -11,14 +11,26 @@
 <header class="top">
   <h1>⚡ Forja de Poder</h1>
   <nav class="tabs">
-    <button class="tab on" data-tab="explorar">Explorar animes</button>
+    <button class="tab on" data-tab="meus">Meus animes</button>
+    <button class="tab" data-tab="explorar">Explorar animes</button>
     <button class="tab" data-tab="criador">Criar meu sistema</button>
     <button id="baixarPdf" class="tab">Baixar PDF</button>
     <button id="baixarTxt" class="tab">Baixar TXT</button>
   </nav>
 </header>
 
-<section id="explorar" class="pane on">
+<section id="meus" class="pane on">
+  <div class="bar">
+    <div id="meusLista" class="filtros"></div>
+    <button id="meusNovo" class="btn ghost sm">+ Novo anime</button>
+    <button id="meusCopiar" class="btn ghost sm">Copiar dados</button>
+    <button id="meusRestaurar" class="btn ghost sm">Voltar ao salvo</button>
+    <span id="meusAviso" class="muted"></span>
+  </div>
+  <div id="meuAnime"></div>
+</section>
+
+<section id="explorar" class="pane">
   <div class="bar">
     <input id="filtro" type="search" placeholder="Filtrar por anime, sistema ou personagem…">
     <select id="anoFiltro"><option value="">Todos os anos</option><option>2023</option><option>2024</option><option>2025</option></select>
@@ -65,6 +77,8 @@
 <div id="relatorio"></div>
 
 <script src="data.js"></script>
+<script src="meus-animes.js"></script>
+<script src="meus.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

@@ -272,6 +272,7 @@ function textoCompleto() {
     a.personagens.forEach(p => L.push(`  - ${p.nome}: ${p.poder} (ligação: ${p.ligacao})`));
     L.push("");
   });
+  if (window.meusTexto) L.push("=== MEUS ANIMES ===", "", window.meusTexto());
   L.push("=== PARTE 2: MEU SISTEMA ===", "", `${S.nome} — energia: ${S.energia}`, `${S.linhagens.length} linhagens · ${S.personagens.length} personagens`, "");
   S.linhagens.forEach(l => {
     const m = S.personagens.filter(p => p.lin === l.id);
@@ -289,6 +290,7 @@ function htmlRelatorio() {
   ANIMES.forEach(a => {
     h += `<div class="bloco"><h3>${esc(a.titulo)} (${a.ano})</h3><p><b>Sistema de poder:</b> ${esc(a.sistema)}</p><p>${esc(a.resumo)}</p><ul>${a.personagens.map(p => `<li><b>${esc(p.nome)}</b>: ${esc(p.poder)} <i>(ligação: ${esc(p.ligacao)})</i></li>`).join("")}</ul></div>`;
   });
+  if (window.meusHtml) h += `<h2 class="quebra">Meus animes</h2>` + window.meusHtml();
   h += `<h2 class="quebra">Parte 2: ${esc(S.nome)}</h2><p><b>Energia:</b> ${esc(S.energia)} · ${S.linhagens.length} linhagens · ${S.personagens.length} personagens</p>`;
   S.linhagens.forEach(l => {
     const m = S.personagens.filter(p => p.lin === l.id);
