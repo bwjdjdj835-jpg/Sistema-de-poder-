@@ -9,6 +9,6 @@ Web app estático (pt-BR) sobre sistemas de poder de anime.
     npx serve .
 Abra http://localhost:3000 (ou abra `index.html` direto no navegador).
 
-Online: https://forja-de-poder.vercel.app
+Online: https://sistema-de-poder.vercel.app
 
 Para adicionar animes ao catálogo, edite `data.js`.
